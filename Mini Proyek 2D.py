@@ -1,9 +1,9 @@
 import os
 
-header_batua=["User_ID","Product_ID","Category","Price (Rs.)","Discount","Final_Price (Rs.)","Payment_Method","Purchase_Date"]
+header_batua = ["User_ID", "Product_ID", "Category", "Price (Rs.)", "Discount (%)", "Final_Price(Rs.)", "Payment_Method", "Purchase_Date"]
 
-def file(file):
-    return os.path.exists(file)
+def file_ada(nama_file):
+    return os.path.exists(nama_file)
 
 def angka_valid(teks):
     teks=teks.strip()
@@ -185,3 +185,22 @@ def baca_dan_olahdata(nama_file, batas_baris):
             "rentang_total_akhir": rentang_total_akhir,
         }
         return hasil
+
+def main():
+    nama_file = "ecommerce_dataset_updated.csv"
+    batas_baris = 1000
+
+    if not file_ada(nama_file):
+        print("File tidak ditemukan")
+        return
+
+    hasil = baca_dan_olahdata(nama_file, batas_baris)
+    if hasil is None:
+        return
+
+    if hasil["jumlah_valid"] == 0:
+        print("Dataset kosong atau hanya header")
+        return
+    print(hasil)
+
+main()
