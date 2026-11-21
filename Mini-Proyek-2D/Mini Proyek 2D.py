@@ -73,19 +73,45 @@ def grup_metode(metode):
         return "Tunai"
     else:
         return "Non-Tunai"
+    
+def perbarui_diskon(nama, jumlah, total_awal, total_akhir,
+                    diskon, harga, harga_akhir):
+    if diskon in nama:
+        idx = nama.index(diskon)
+    else:  
+        nama.append(diskon)
+        jumlah.append(0)
+        total_awal.append(0)
+        total_akhir.append(0)
+        idx = len(nama) - 1
+    jumlah[idx] += 1
+    total_awal[idx] += harga
+    total_akhir[idx] += harga_akhir
 
-def kategori_baru(nama,jumlah,total_akhir,tunai,nontunai,kategori,harga_akhir,grup):
-        if kategori in nama :
-            idx = nama.index(kategori)
-        else:
-            nama.append(kategori)
-            jumlah.append(0)
-            total_akhir.append(0)
-            tunai.append(0)
-            idx = len(nama) - 1
-        jumlah[idx] += 1
-        total_akhir[idx] += harga_akhir
-        if grup == "Tunai":
-            tunai[idx]+= 1
-        else:
-            nontunai[idx] += 1
+def perbarui_kategori(nama, jumlah, total_akhir, tunai, nontunai, kategori, harga_akhir, grup):
+    if kategori in nama:
+        idx = nama.index (kategori)
+    else:
+        nama.append(kategori)
+        jumlah.append(0)
+        total_akhir.append(0)
+        tunai.append(0)
+        nontunai.append(0)
+        idx = len(nama) - 1
+    jumlah[idx] += 1
+    total_akhir[idx] += harga_akhir
+    if grup == "Tunai":
+        tunai[idx] += 1
+    else:
+        nontunai[idx] += 1
+        
+def perbarui_rentang(nama,jumlah,total_akhir,rentang,harga_akhir):
+    if rentang in nama:
+        idx=nama.index(rentang)
+    else:
+        nama.append(rentang)
+        jumlah.append(0)
+        total_akhir.append(0)
+        idx = len(nama) - 1
+    jumlah[idx] += 1
+    total_akhir[idx] += harga_akhir
