@@ -144,7 +144,7 @@ def baca_dan_olahdata(nama_file, batas_baris):
     with open(nama_file, "r", encoding="utf-8-sig") as f:
         header = f.readline().strip().split(",")
         for i in range(len(header)):
-            header[i]= header[i].split()
+            header[i]= header[i].strip()
         if header != header_batua:
             print("Header Salah atau Tidak Sesuai")
             return None
