@@ -33,6 +33,17 @@ def tanggal_valid(teks):
         return False
     if int(tahun)<2000 or int(tahun)>2100:
         return False
+
+    batas_hari = 31
+    if int(bulan) in [4, 6, 9, 11]:
+        batas_hari = 30
+    elif int(bulan) == 2:
+        if int(tahun) % 4 == 0 and (int(tahun) % 100 != 0 or int(tahun) % 400 == 0):
+            batas_hari = 29
+        else:
+            batas_hari = 28
+    if int(hari) > batas_hari:
+        return False
     
     return True
 
@@ -53,7 +64,7 @@ def baris_valid(kolom):
         return False
     if diskon <0 or diskon > 100:
         return False
-    if not tanggal_valid:
+    if not tanggal_valid(kolom[7]):
         return False
     if round(harga * (1-diskon / 100), 2) !=harga_akhir:
         return False
@@ -163,7 +174,9 @@ def baca_dan_olahdata(nama_file, batas_baris):
                     rentang = rentang_harga(harga)
                     grup=grup_metode(kolom[6].strip())
                     perbarui_diskon(diskon_nama,diskon_jumlah,diskon_total_awal,diskon_total_akhir,diskon,harga,harga_akhir)
-                    perbarui_kategori(kategori_nama,kategori_jumlah,kategori_total_akhir,kategori_tunai,kategori_nontunai)
+                    perbarui_kategori(kategori_nama, kategori_jumlah, kategori_total_akhir,
+                  kategori_tunai, kategori_nontunai,
+                  kolom[2].strip(), harga_akhir, grup)
                     perbarui_rentang(rentang_nama,rentang_jumlah,rentang_total_akhir,rentang,harga_akhir)
                     jumlah_dihitung += 1
 
@@ -173,6 +186,7 @@ def baca_dan_olahdata(nama_file, batas_baris):
             "jumlah_tidak_valid": jumlah_tidak_valid,
             "jumlah_dihitung": jumlah_dihitung,
             "diskon_nama": diskon_nama,
+            "diskon_jumlah": diskon_jumlah,
             "diskon_total_awal": diskon_total_awal,
             "diskon_total_akhir": diskon_total_akhir,
             "kategori_nama": kategori_nama,
