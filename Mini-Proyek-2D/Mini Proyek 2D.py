@@ -1,6 +1,6 @@
 import os
 
-header=["User_ID","Product_ID","Category","Price (Rs.)","Discount","Final_Price (Rs.)","Payment_Method","Purchase_Date"]
+header_batua=["User_ID","Product_ID","Category","Price (Rs.)","Discount","Final_Price (Rs.)","Payment_Method","Purchase_Date"]
 
 def file(file):
     return os.path.exists(file)
@@ -104,7 +104,7 @@ def perbarui_kategori(nama, jumlah, total_akhir, tunai, nontunai, kategori, harg
         tunai[idx] += 1
     else:
         nontunai[idx] += 1
-        
+
 def perbarui_rentang(nama,jumlah,total_akhir,rentang,harga_akhir):
     if rentang in nama:
         idx=nama.index(rentang)
@@ -115,3 +115,73 @@ def perbarui_rentang(nama,jumlah,total_akhir,rentang,harga_akhir):
         idx = len(nama) - 1
     jumlah[idx] += 1
     total_akhir[idx] += harga_akhir
+
+def baca_dan_olahdata(nama_file, batas_baris):
+    #inisialisasi
+    jumlah_dibaca=0
+    jumlah_valid=0
+    jumlah_tidak_valid=0
+    jumlah_dihitung=0
+
+    #Rekap A
+    diskon_nama=[]
+    diskon_jumlah=[]
+    diskon_total_awal=[]
+    diskon_total_akhir=[]
+
+    #Rekap B
+    kategori_nama=[]
+    kategori_jumlah=[]
+    kategori_total_akhir=[]
+    kategori_tunai=[]
+    kategori_nontunai=[]
+
+    #Rekap C 
+    rentang_nama=[]
+    rentang_jumlah=[]
+    rentang_total_akhir=[]
+
+    with open(nama_file, "r", encoding="utf-8-sig") as f:
+        header = f.readline().strip().split(",")
+        for i in range(len(header)):
+            header[i]= header[i].split()
+        if header != header_batua:
+            print("Header Salah atau Tidak Sesuai")
+            return None
+
+        for baris in f:
+            jumlah_dibaca += 1
+            kolom= baris.strip().split(",")
+            if not baris_valid(kolom):
+                jumlah_tidak_valid += 1
+            else :
+                jumlah_valid += 1
+                if jumlah_dihitung < batas_baris:
+                    harga = float(kolom[3])
+                    diskon = float(kolom[4])
+                    harga_akhir = float(kolom[5])
+                    rentang = rentang_harga(harga)
+                    grup=grup_metode(kolom[6].strip())
+                    perbarui_diskon(diskon_nama,diskon_jumlah,diskon_total_awal,diskon_total_akhir,diskon,harga,harga_akhir)
+                    perbarui_kategori(kategori_nama,kategori_jumlah,kategori_total_akhir,kategori_tunai,kategori_nontunai)
+                    perbarui_rentang(rentang_nama,rentang_jumlah,rentang_total_akhir,rentang,harga_akhir)
+                    jumlah_dihitung += 1
+
+        hasil = {
+            "jumlah_dibaca": jumlah_dibaca,
+            "jumlah_valid": jumlah_valid,
+            "jumlah_tidak_valid": jumlah_tidak_valid,
+            "jumlah_dihitung": jumlah_dihitung,
+            "diskon_nama": diskon_nama,
+            "diskon_total_awal": diskon_total_awal,
+            "diskon_total_akhir": diskon_total_akhir,
+            "kategori_nama": kategori_nama,
+            "kategori_jumlah": kategori_jumlah,
+            "kategori_total_akhir": kategori_total_akhir,
+            "kategori_tunai": kategori_tunai,
+            "kategori_nontunai": kategori_nontunai,
+            "rentang_nama": rentang_nama,
+            "rentang_jumlah": rentang_jumlah,
+            "rentang_total_akhir": rentang_total_akhir,
+        }
+        return hasil
