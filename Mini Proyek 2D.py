@@ -84,6 +84,36 @@ def grup_metode(metode):
         return "Tunai"
     else:
         return "Non-Tunai"
+
+def urutkan_diskon(nama, jumlah, total_awal, total_akhir):
+    n = len(nama)
+    for i in range(n - 1):
+        idx_min = i
+        for j in range(i + 1, n):
+            if nama[j] < nama[idx_min]:
+                idx_min = j
+        if idx_min != i:
+            nama[i], nama[idx_min] = nama[idx_min], nama[i]
+            jumlah[i], jumlah[idx_min] = jumlah[idx_min], jumlah[i]
+            total_awal[i], total_awal[idx_min] = total_awal[idx_min], total_awal[i]
+            total_akhir[i], total_akhir[idx_min] = total_akhir[idx_min], total_akhir[i]
+
+
+def urutkan_kategori(nama, jumlah, total_akhir, tunai, nontunai, dominan, nilai_urut):
+    n = len(nama)
+    for i in range(n - 1):
+        idx_maks = i
+        for j in range(i + 1, n):
+            if nilai_urut[j] > nilai_urut[idx_maks]:
+                idx_maks = j
+        if idx_maks != i:
+            nama[i], nama[idx_maks] = nama[idx_maks], nama[i]
+            jumlah[i], jumlah[idx_maks] = jumlah[idx_maks], jumlah[i]
+            total_akhir[i], total_akhir[idx_maks] = total_akhir[idx_maks], total_akhir[i]
+            tunai[i], tunai[idx_maks] = tunai[idx_maks], tunai[i]
+            nontunai[i], nontunai[idx_maks] = nontunai[idx_maks], nontunai[i]
+            dominan[i], dominan[idx_maks] = dominan[idx_maks], dominan[i]
+            nilai_urut[i], nilai_urut[idx_maks] = nilai_urut[idx_maks], nilai_urut[i]
     
 def perbarui_diskon(nama, jumlah, total_awal, total_akhir,
                     diskon, harga, harga_akhir):
