@@ -127,6 +127,20 @@ def perbarui_rentang(nama,jumlah,total_akhir,rentang,harga_akhir):
     jumlah[idx] += 1
     total_akhir[idx] += harga_akhir
 
+def hitung_rata(total,jumlah):
+    if jumlah > 0:
+        return total / jumlah
+    else:
+        return 0
+def metode_dominan(tunai, nontunai):
+    if tunai > nontunai:
+        return "Tunai", tunai
+    if nontunai > tunai:
+        return "Non-tunai", nontunai
+    else:
+        return "sama", tunai
+
+
 def baca_dan_olahdata(nama_file, batas_baris):
     #inisialisasi
     jumlah_dibaca=0
@@ -215,6 +229,5 @@ def main():
     if hasil["jumlah_valid"] == 0:
         print("Dataset kosong atau hanya header")
         return
-    print(hasil)
 
 main()
