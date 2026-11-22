@@ -114,6 +114,15 @@ def urutkan_kategori(nama, jumlah, total_akhir, tunai, nontunai, dominan, nilai_
             nontunai[i], nontunai[idx_maks] = nontunai[idx_maks], nontunai[i]
             dominan[i], dominan[idx_maks] = dominan[idx_maks], dominan[i]
             nilai_urut[i], nilai_urut[idx_maks] = nilai_urut[idx_maks], nilai_urut[i]
+
+def cari_terbanyak(nama, jumlah):
+    terbanyak = 0
+    nama_terbanyak = "-"
+    for i in range(len(nama)):
+        if jumlah[i] > terbanyak:
+            terbanyak = jumlah[i]
+            nama_terbanyak = nama[i]
+    return nama_terbanyak, terbanyak
     
 def perbarui_diskon(nama, jumlah, total_awal, total_akhir,
                     diskon, harga, harga_akhir):
