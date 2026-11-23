@@ -366,5 +366,5 @@ def main():
     if hasil["jumlah_valid"] == 0:
         print("Dataset kosong atau hanya header")
         return
-
+    tampilkan_hasil(hasil)
 main()
