@@ -351,7 +351,7 @@ def baca_dan_olahdata(nama_file, batas_baris):
         }
         return hasil
 
-def main():
+def jalan_program():
     nama_file = "ecommerce_dataset_updated.csv"
     batas_baris = 1000
 
@@ -367,4 +367,4 @@ def main():
         print("Dataset kosong atau hanya header")
         return
     tampilkan_hasil(hasil)
-main()
+jalan_program()
