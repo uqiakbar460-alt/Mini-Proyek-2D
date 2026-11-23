@@ -256,7 +256,10 @@ def tampilkan_hasil(hasil):
     else:
         print("Level diskon terbanyak  : -")
     print("Rentang harga terbanyak : %s (%d transaksi)" % (rentang_t, jml_rentang_t))
+    kategori_t, jml_kategori_t = cari_terbanyak(k_nama, k_jumlah)
+    print("Kategori terbanyak      : %s (%d transaksi)" % (kategori_t, jml_kategori_t))
 
+    
     k_dominan = []
     k_nilai_urut = []
     for i in range(len(k_nama)):
