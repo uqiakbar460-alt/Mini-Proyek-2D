@@ -179,6 +179,104 @@ def metode_dominan(tunai, nontunai):
     else:
         return "sama", tunai
 
+def tampilkan_hasil(hasil):
+    garis = "=" * 78
+
+    print(garis)
+    print("Rekap Transaksi E-Commerce 2024")
+    print(garis)
+    print("Baris dibaca        :", hasil["jumlah_dibaca"])
+    print("Baris valid         :", hasil["jumlah_valid"])
+    print("Baris tidak valid   :", hasil["jumlah_tidak_valid"])
+    print("Baris dianalisis    :", hasil["jumlah_dihitung"])
+
+    d_nama = hasil["diskon_nama"]
+    d_jumlah = hasil["diskon_jumlah"]
+    d_awal = hasil["diskon_total_awal"]
+    d_akhir = hasil["diskon_total_akhir"]
+    urutkan_diskon(d_nama, d_jumlah, d_awal, d_akhir)
+
+    print()
+    print("TABEL A. Rekap Per Level Diskon")
+    print("-" * 78)
+    print("Diskon".ljust(9) + "Jumlah".rjust(8) + "Rata Harga Awal".rjust(20)
+          + "Rata Harga Akhir".rjust(21) + "Rata Potongan".rjust(20))
+    print("-" * 78)
+    for i in range(len(d_nama)):
+        rata_awal = hitung_rata(d_awal[i], d_jumlah[i])
+        rata_akhir = hitung_rata(d_akhir[i], d_jumlah[i])
+        potongan = rata_awal - rata_akhir
+        print((str(int(d_nama[i])) + "%").ljust(9) + str(d_jumlah[i]).rjust(8)
+              + ("%.2f" % rata_awal).rjust(20) + ("%.2f" % rata_akhir).rjust(21)
+              + ("%.2f" % potongan).rjust(20))
+
+    k_nama = hasil["kategori_nama"]
+    k_jumlah = hasil["kategori_jumlah"]
+    k_akhir = hasil["kategori_total_akhir"]
+    k_tunai = hasil["kategori_tunai"]
+    k_nontunai = hasil["kategori_nontunai"]
+
+    print()
+    print("TABEL B. Rekap Per Kategori Produk")
+    print("-" * 78)
+    print("Kategori".ljust(20) + "Jumlah".rjust(8) + "Rata Harga Akhir".rjust(22))
+    print("-" * 78)
+    for i in range(len(k_nama)):
+        rata = hitung_rata(k_akhir[i], k_jumlah[i])
+        print(k_nama[i].ljust(20) + str(k_jumlah[i]).rjust(8) + ("%.2f" % rata).rjust(22))
+
+    r_nama = hasil["rentang_nama"]
+    r_jumlah = hasil["rentang_jumlah"]
+    r_akhir = hasil["rentang_total_akhir"]
+    urutan_rentang = ["<150", "150-<300", ">=300"]
+
+    print()
+    print("TABEL C. Rekap Per Rentang Harga")
+    print("-" * 78)
+    print("Rentang Harga".ljust(20) + "Jumlah".rjust(8) + "Rata Harga Akhir".rjust(22))
+    print("-" * 78)
+    for nama_r in urutan_rentang:
+        if nama_r in r_nama:
+            idx = r_nama.index(nama_r)
+            jml = r_jumlah[idx]
+            rata = hitung_rata(r_akhir[idx], jml)
+        else:
+            jml = 0
+            rata = 0
+        print(nama_r.ljust(20) + str(jml).rjust(8) + ("%.2f" % rata).rjust(22))
+
+    level_t, jml_level_t = cari_terbanyak(d_nama, d_jumlah)
+    rentang_t, jml_rentang_t = cari_terbanyak(r_nama, r_jumlah)
+
+    print()
+    print("Ringkasan Transaksi Terbanyak")
+    print("-" * 78)
+    if jml_level_t > 0:
+        print("Level diskon terbanyak  : %d%% (%d transaksi)" % (int(level_t), jml_level_t))
+    else:
+        print("Level diskon terbanyak  : -")
+    print("Rentang harga terbanyak : %s (%d transaksi)" % (rentang_t, jml_rentang_t))
+
+    k_dominan = []
+    k_nilai_urut = []
+    for i in range(len(k_nama)):
+        dom, nilai = metode_dominan(k_tunai[i], k_nontunai[i])
+        k_dominan.append(dom)
+        k_nilai_urut.append(nilai)
+
+    urutkan_kategori(k_nama, k_jumlah, k_akhir, k_tunai, k_nontunai, k_dominan, k_nilai_urut)
+
+    print()
+    print("TABEL D. Tunai dan Nontunai Mana Paling banyak)")
+    print("-" * 78)
+    print("No".ljust(5) + "Kategori".ljust(20) + "Tunai".rjust(8) + "Non-Tunai".rjust(12)
+          + "Dominan".rjust(14))
+    print("-" * 78)
+    for i in range(len(k_nama)):
+        print(str(i + 1).ljust(5) + k_nama[i].ljust(20) + str(k_tunai[i]).rjust(8)
+              + str(k_nontunai[i]).rjust(12) + k_dominan[i].rjust(14))
+    print(garis)
+
 
 def baca_dan_olahdata(nama_file, batas_baris):
     #inisialisasi
