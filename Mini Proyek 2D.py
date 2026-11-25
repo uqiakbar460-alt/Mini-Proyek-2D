@@ -198,59 +198,70 @@ def cari_data(data):
             daftar.append(i)
     tampilkan_daftar(data, daftar)
 
+def hitung_rekap(data, mode):
 
-def tampilkan_ringkasan_baris(hasil):
-    garis = "=" * 78
+    daftar_kunci = []
+    for b in data:
+        if mode == "diskon":
+            k = float(b[4])
+        elif mode == "kategori":
+            k = b[2]
+        elif float(b[3]) < 150:
+            k = "<150"
+        elif float(b[3]) < 300:
+            k = "150-<300"
+        else:
+            k = ">=300"
+        daftar_kunci.append(k)
 
-    print(garis)
-    print("Rekap Transaksi E-Commerce 2024")
-    print(garis)
-    print("Baris dibaca        :", hasil["jumlah_dibaca"])
-    print("Baris valid         :", hasil["jumlah_valid"])
-    print("Baris tidak valid   :", hasil["jumlah_tidak_valid"])
-    print("Baris dianalisis    :", hasil["jumlah_dihitung"])
+    kunci = []
+    if mode == "rentang":
+        kunci = ["<150", "150-<300", ">=300"]
+    else:
+        for k in daftar_kunci:
+            if k not in kunci:
+                kunci.append(k)
+    jml = [0] * len(kunci)
+    awal = [0] * len(kunci)
+    akhir = [0] * len(kunci)
+    for j in range(len(data)):
+        i = kunci.index(daftar_kunci[j])
+        jml[i] += 1
+        awal[i] += float(data[j][3])
+        akhir[i] += float(data[j][5])
+    if mode == "diskon":
+        urutkan(kunci, [kunci, jml, awal, akhir])  # level diskon diurutkan naik
+    return kunci, jml, awal, akhir
 
-def tampilkan_tabel_a(hasil):
-    d_nama = hasil["diskon_nama"]
-    d_jumlah = hasil["diskon_jumlah"]
-    d_awal = hasil["diskon_total_awal"]
-    d_akhir = hasil["diskon_total_akhir"]
-  
-
-    print()
-    print("TABEL A. Rekap Per Level Diskon")
+def tabel_rekap(data, mode, judul, nama_kolom):
+    kunci, jml, awal, akhir = hitung_rekap(data, mode)
+    print("\n" + judul + "\n" + "-" * 78)
+    if mode == "diskon":
+        print(nama_kolom.ljust(9) + "Jumlah".rjust(8) + "Rata Harga Awal".rjust(20)
+              + "Rata Harga Akhir".rjust(21) + "Rata Potongan".rjust(20))
+    else:
+        print(nama_kolom.ljust(20) + "Jumlah".rjust(8) + "Rata Harga Akhir".rjust(22))
     print("-" * 78)
-    print("Diskon".ljust(9) + "Jumlah".rjust(8) + "Rata Harga Awal".rjust(20)
-          + "Rata Harga Akhir".rjust(21) + "Rata Potongan".rjust(20))
-    print("-" * 78)
-    for i in range(len(d_nama)):
-        rata_awal = hitung_rata(d_awal[i], d_jumlah[i])
-        rata_akhir = hitung_rata(d_akhir[i], d_jumlah[i])
-        potongan = rata_awal - rata_akhir
-        print((str(int(d_nama[i])) + "%").ljust(9) + str(d_jumlah[i]).rjust(8)
-              + ("%.2f" % rata_awal).rjust(20) + ("%.2f" % rata_akhir).rjust(21)
-              + ("%.2f" % potongan).rjust(20))
+    for i in range(len(kunci)):
+        rata_awal = 0
+        rata_akhir = 0
+        if jml[i] > 0:
+            rata_awal = awal[i] / jml[i]
+            rata_akhir = akhir[i] / jml[i]
+        if mode == "diskon":
+            print((str(int(kunci[i])) + "%").ljust(9) + str(jml[i]).rjust(8) + ("%.2f" % rata_awal).rjust(20)
+                  + ("%.2f" % rata_akhir).rjust(21) + ("%.2f" % (rata_awal - rata_akhir)).rjust(20))
+        else:
+            print(kunci[i].ljust(20) + str(jml[i]).rjust(8) + ("%.2f" % rata_akhir).rjust(22))
 
-def tampilkan_tabel_b(hasil):
-    k_nama = hasil["kategori_nama"]
-    k_jumlah = hasil["kategori_jumlah"]
-    k_akhir = hasil["kategori_total_akhir"]
-  
-
-    print()
-    print("TABEL B. Rekap Per Kategori Produk")
-    print("-" * 78)
-    print("Kategori".ljust(20) + "Jumlah".rjust(8) + "Rata Harga Akhir".rjust(22))
-    print("-" * 78)
-    for i in range(len(k_nama)):
-        rata = hitung_rata(k_akhir[i], k_jumlah[i])
-        print(k_nama[i].ljust(20) + str(k_jumlah[i]).rjust(8) + ("%.2f" % rata).rjust(22))
-
-def tampilkan_tabel_c(hasil):
-    r_nama = hasil["rentang_nama"]
-    r_jumlah = hasil["rentang_jumlah"]
-    r_akhir = hasil["rentang_total_akhir"]
-    urutan_rentang = ["<150", "150-<300", ">=300"]
+def tampil_terbanyak(data):
+    print("\nRingkasan Transaksi Terbanyak\n" + "-" * 78)
+    kunci, jml, _, _ = hitung_rekap(data, "diskon")
+    i = jml.index(max(jml))
+    print("Level diskon terbanyak  : %d%% (%d transaksi)" % (int(kunci[i]), jml[i]))
+    kunci, jml, _, _ = hitung_rekap(data, "rentang")
+    i = jml.index(max(jml))
+    print("Rentang harga terbanyak : %s (%d transaksi)" % (kunci[i], jml[i]))
 
     print()
     print("TABEL C. Rekap Per Rentang Harga")
