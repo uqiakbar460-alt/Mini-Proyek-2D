@@ -190,6 +190,7 @@ def tampilkan_hasil(hasil):
     print("Baris tidak valid   :", hasil["jumlah_tidak_valid"])
     print("Baris dianalisis    :", hasil["jumlah_dihitung"])
 
+def tampilkan_tabel_a(hasil):
     d_nama = hasil["diskon_nama"]
     d_jumlah = hasil["diskon_jumlah"]
     d_awal = hasil["diskon_total_awal"]
@@ -210,11 +211,11 @@ def tampilkan_hasil(hasil):
               + ("%.2f" % rata_awal).rjust(20) + ("%.2f" % rata_akhir).rjust(21)
               + ("%.2f" % potongan).rjust(20))
 
+def tampilkan_tabel_b(hasil):
     k_nama = hasil["kategori_nama"]
     k_jumlah = hasil["kategori_jumlah"]
     k_akhir = hasil["kategori_total_akhir"]
-    k_tunai = hasil["kategori_tunai"]
-    k_nontunai = hasil["kategori_nontunai"]
+  
 
     print()
     print("TABEL B. Rekap Per Kategori Produk")
@@ -225,6 +226,7 @@ def tampilkan_hasil(hasil):
         rata = hitung_rata(k_akhir[i], k_jumlah[i])
         print(k_nama[i].ljust(20) + str(k_jumlah[i]).rjust(8) + ("%.2f" % rata).rjust(22))
 
+def tampilkan_tabel_c(hasil):
     r_nama = hasil["rentang_nama"]
     r_jumlah = hasil["rentang_jumlah"]
     r_akhir = hasil["rentang_total_akhir"]
@@ -245,6 +247,7 @@ def tampilkan_hasil(hasil):
             rata = 0
         print(nama_r.ljust(20) + str(jml).rjust(8) + ("%.2f" % rata).rjust(22))
 
+def tampilkan_terbanyak(hasil):
     level_t, jml_level_t = cari_terbanyak(d_nama, d_jumlah)
     rentang_t, jml_rentang_t = cari_terbanyak(r_nama, r_jumlah)
 
@@ -259,6 +262,12 @@ def tampilkan_hasil(hasil):
     kategori_t, jml_kategori_t = cari_terbanyak(k_nama, k_jumlah)
     print("Kategori terbanyak      : %s (%d transaksi)" % (kategori_t, jml_kategori_t))
 
+def tampilkan_tabel_d(hasil):
+    k_nama = hasil["kategori_nama"][:]
+    k_jumlah = hasil["kategori_jumlah"][:]
+    k_akhir = hasil["kategori_total_akhir"][:]
+    k_tunai = hasil["kategori_tunai"][:]
+    k_nontunai = hasil["kategori_nontunai"][:]
     
     k_dominan = []
     k_nilai_urut = []
