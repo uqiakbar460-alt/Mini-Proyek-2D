@@ -103,45 +103,57 @@ def tampilkan_daftar(data, daftar):
                 break
             print(kop)
     print("Total data:", len(daftar))
-    
-def urutkan_kategori(nama, jumlah, total_akhir, tunai, nontunai, dominan, nilai_urut):
-    n = len(nama)
-    for i in range(n - 1):
-        idx_maks = i
-        for j in range(i + 1, n):
-            if nilai_urut[j] > nilai_urut[idx_maks]:
-                idx_maks = j
-        if idx_maks != i:
-            nama[i], nama[idx_maks] = nama[idx_maks], nama[i]
-            jumlah[i], jumlah[idx_maks] = jumlah[idx_maks], jumlah[i]
-            total_akhir[i], total_akhir[idx_maks] = total_akhir[idx_maks], total_akhir[i]
-            tunai[i], tunai[idx_maks] = tunai[idx_maks], tunai[i]
-            nontunai[i], nontunai[idx_maks] = nontunai[idx_maks], nontunai[i]
-            dominan[i], dominan[idx_maks] = dominan[idx_maks], dominan[i]
-            nilai_urut[i], nilai_urut[idx_maks] = nilai_urut[idx_maks], nilai_urut[i]
 
-def cari_terbanyak(nama, jumlah):
-    terbanyak = 0
-    nama_terbanyak = "-"
-    for i in range(len(nama)):
-        if jumlah[i] > terbanyak:
-            terbanyak = jumlah[i]
-            nama_terbanyak = nama[i]
-    return nama_terbanyak, terbanyak
-    
-def perbarui_diskon(nama, jumlah, total_awal, total_akhir,
-                    diskon, harga, harga_akhir):
-    if diskon in nama:
-        idx = nama.index(diskon)
-    else:  
-        nama.append(diskon)
-        jumlah.append(0)
-        total_awal.append(0)
-        total_akhir.append(0)
-        idx = len(nama) - 1
-    jumlah[idx] += 1
-    total_awal[idx] += harga
-    total_akhir[idx] += harga_akhir
+def menu_tampilkan(data):
+    print("\nTAMPILKAN DATA\n1. Tampilkan semua data\n2. Filter berdasarkan metode pembayaran")
+    pilihan = input("Pilih (1-2): ").strip()
+    daftar = []
+    if pilihan == "1":
+        for i in range(len(data)):
+            daftar.append(i)
+    elif pilihan == "2":
+        metode = []
+        for b in data:
+            if b[6] not in metode:
+                metode.append(b[6])
+        metode.sort()
+        for i in range(len(metode)):
+            print(str(i + 1) + ". " + metode[i])
+        pil = input("Pilih metode: ").strip()
+        if not (pil.isdigit() and 1 <= int(pil) <= len(metode)):
+            print("Pilihan tidak valid.")
+            return
+        for i in range(len(data)):
+            if data[i][6] == metode[int(pil) - 1]:
+                daftar.append(i)
+    else:
+        print("Pilihan tidak valid.")
+        return
+    tampilkan_daftar(data, daftar)
+
+def minta_data(lama):
+    baru = []
+    for i in range(8):
+        if i == 5:
+            baru.append("")
+            continue
+        petunjuk = ""
+        if lama is not None:
+            petunjuk = " [" + lama[i] + "]"
+        teks = input(header_batua[i] + petunjuk + ": ").strip()
+        if teks == "" and lama is not None:
+            teks = lama[i]  # Enter = pakai nilai lama
+        baru.append(teks)
+    if baru[3].replace(".", "", 1).isdigit() and baru[4].replace(".", "", 1).isdigit():
+        baru[5] = "%.2f" % round(float(baru[3]) * (1 - float(baru[4]) / 100), 2)
+    else:
+        print("Data tidak valid: Price dan Discount harus angka\nData tidak disimpan.")
+        return None
+    pesan = validasi_data(baru)
+    if pesan != "":
+        print("Data tidak valid:", pesan, "\nData tidak disimpan.")
+        return None
+    return baru
 
 def perbarui_kategori(nama, jumlah, total_akhir, tunai, nontunai, kategori, harga_akhir, grup):
     if kategori in nama:
