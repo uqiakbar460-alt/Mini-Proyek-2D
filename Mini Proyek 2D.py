@@ -1,38 +1,43 @@
+import csv
 import os
 
-header_batua = ["User_ID", "Product_ID", "Category", "Price (Rs.)", "Discount (%)", "Final_Price(Rs.)", "Payment_Method", "Purchase_Date"]
+nama_file = "ecommerce_dataset_updated.csv"
+batas_baris = 1000
+header_batua = ["User_ID", "Product_ID", "Category", "Price (Rs.)", "Discount (%)",
+                "Final_Price(Rs.)", "Payment_Method", "Purchase_Date"]
 
-def file_ada(nama_file):
-    return os.path.exists(nama_file)
 
-def angka_valid(teks):
-    teks=teks.strip()
-    if teks == "":
-        return False
-    bagian = teks.split(".")
-    if len (bagian) > 2:
-        return False
-    for b in bagian:
-        if not b.isdigit():
-            return False
+def validasi_data(kolom):
+    if len(kolom) != 8:
+        return "Jumlah kolom harus 8"
+    for k in kolom:
+        if k.strip() == "":
+            return "Semua kolom harus terisi"
 
-    return True
+    for i in range(3, 6):
+        if not kolom[i].strip().replace(".", "", 1).isdigit():
+            return "Price, Discount, dan Final Price harus angka"
+    harga = float(kolom[3])
+    diskon = float(kolom[4])
+    if harga <= 0:
+        return "Price harus lebih dari 0"
+    if diskon < 0 or diskon > 100:
+        return "Discount harus antara 0 sampai 100"
 
-def tanggal_valid(teks):
-    bagian =teks.strip().split("-")
-    if len(bagian) != 3:
-        return False
-    hari,bulan,tahun=bagian
-    if not(hari.isdigit() and bulan.isdigit() and tahun.isdigit()):
-        return False
-    if len(hari) !=2 or len(bulan) !=2 or len(tahun) !=4:
-        return False
-    if int(hari)<1 or int(hari)>31:
-        return False
-    if int(bulan)<1 or int(bulan)>12:
-        return False
-    if int(tahun)<2000 or int(tahun)>2100:
-        return False
+    tanggal = kolom[7].strip().split("-")
+    if len(tanggal) != 3:
+        return "Tanggal harus format DD-MM-YYYY"
+    hari, bulan, tahun = tanggal
+    if not (hari.isdigit() and bulan.isdigit() and tahun.isdigit()):
+        return "Tanggal harus format DD-MM-YYYY"
+    if len(hari) != 2 or len(bulan) != 2 or len(tahun) != 4:
+        return "Tanggal harus format DD-MM-YYYY"
+    if int(hari) < 1 or int(hari) > 31:
+        return "Tanggal tidak valid"
+    if int(bulan) < 1 or int(bulan) > 12:
+        return "Tanggal tidak valid"
+    if int(tahun) < 2000 or int(tahun) > 2100:
+        return "Tanggal tidak valid"
 
     batas_hari = 31
     if int(bulan) in [4, 6, 9, 11]:
@@ -43,9 +48,11 @@ def tanggal_valid(teks):
         else:
             batas_hari = 28
     if int(hari) > batas_hari:
-        return False
-    
-    return True
+        return "Tanggal tidak valid"
+
+    if round(harga * (1 - diskon / 100), 2) != float(kolom[5]):
+        return "Final Price tidak sesuai dengan Price dan Discount"
+    return ""
 
 def baris_valid(kolom):
     if len (kolom) !=8:
