@@ -251,7 +251,7 @@ def tabel_rekap(data, mode, judul, nama_kolom):
         if mode == "diskon":
             print((str(int(kunci[i])) + "%").ljust(9) + str(jml[i]).rjust(8) + ("%.2f" % rata_awal).rjust(20)
                   + ("%.2f" % rata_akhir).rjust(21) + ("%.2f" % (rata_awal - rata_akhir)).rjust(20))
-         else:
+        else:
                    print(kunci[i].ljust(20) + str(jml[i]).rjust(8) + ("%.2f" % rata_akhir).rjust(22))
        
 def tampil_terbanyak(data):
@@ -321,153 +321,43 @@ def menu_ringkasan(data):
         if p == "5" or p == "6":
             tabel_d(data)
 
-    urutkan_kategori(k_nama, k_jumlah, k_akhir, k_tunai, k_nontunai, k_dominan, k_nilai_urut)
-
-    print()
-    print("TABEL D. Tunai dan Nontunai Mana Paling banyak)")
-    print("-" * 78)
-    print("No".ljust(5) + "Kategori".ljust(20) + "Tunai".rjust(8) + "Non-Tunai".rjust(12)
-          + "Dominan".rjust(14))
-    print("-" * 78)
-    for i in range(len(k_nama)):
-        print(str(i + 1).ljust(5) + k_nama[i].ljust(20) + str(k_tunai[i]).rjust(8)
-              + str(k_nontunai[i]).rjust(12) + k_dominan[i].rjust(14))
-    print("=" * 78)
-
-def tampilkan_semua(hasil):
-    tampilkan_tabel_a(hasil)
-    tampilkan_tabel_b(hasil)
-    tampilkan_tabel_c(hasil)
-    tampilkan_terbanyak(hasil)
-    tampilkan_tabel_d(hasil)
-
-def tampilkan_menu():
-    print()
-    print("MENU TAMPILAN OUTPUT")
-    print("1. Tabel A - Rekap Per Level Diskon")
-    print("2. Tabel B - Rekap Per Kategori Produk")
-    print("3. Tabel C - Rekap Per Rentang Harga")
-    print("4. Ringkasan Transaksi Terbanyak")
-    print("5. Tabel D - Tunai dan Non-Tunai")
-    print("6. Tampilkan Semua")
-    print("0. Keluar")
-
-def menu_output(hasil):
-    while True:
-        tampilkan_menu()
-        pilihan = input("Pilih menu (0-6): ").strip()
-
-        if pilihan == "1":
-            tampilkan_tabel_a(hasil)
-        elif pilihan == "2":
-            tampilkan_tabel_b(hasil)
-        elif pilihan == "3":
-            tampilkan_tabel_c(hasil)
-        elif pilihan == "4":
-            tampilkan_terbanyak(hasil)
-        elif pilihan == "5":
-            tampilkan_tabel_d(hasil)
-        elif pilihan == "6":
-            tampilkan_semua(hasil)
-        elif pilihan == "0":
-            print("Program selesai.")
-            break
-        else:
-            print("Pilihan tidak valid, masukkan angka 0 sampai 6.")
-
-
-def baca_dan_olahdata(nama_file, batas_baris):
-    #inisialisasi
-    jumlah_dibaca=0
-    jumlah_valid=0
-    jumlah_tidak_valid=0
-    jumlah_dihitung=0
-
-    #Rekap A
-    diskon_nama=[]
-    diskon_jumlah=[]
-    diskon_total_awal=[]
-    diskon_total_akhir=[]
-
-    #Rekap B
-    kategori_nama=[]
-    kategori_jumlah=[]
-    kategori_total_akhir=[]
-    kategori_tunai=[]
-    kategori_nontunai=[]
-
-    #Rekap C 
-    rentang_nama=[]
-    rentang_jumlah=[]
-    rentang_total_akhir=[]
-
-    with open(nama_file, "r", encoding="utf-8-sig") as f:
-        header = f.readline().strip().split(",")
-        for i in range(len(header)):
-            header[i]= header[i].strip()
-        if header != header_batua:
-            print("Header Salah atau Tidak Sesuai")
-            return None
-
-        for baris in f:
-            jumlah_dibaca += 1
-            kolom= baris.strip().split(",")
-            if not baris_valid(kolom):
-                jumlah_tidak_valid += 1
-            else :
-                jumlah_valid += 1
-                if jumlah_dihitung < batas_baris:
-                    harga = float(kolom[3])
-                    diskon = float(kolom[4])
-                    harga_akhir = float(kolom[5])
-                    rentang = rentang_harga(harga)
-                    grup=grup_metode(kolom[6].strip())
-                    perbarui_diskon(diskon_nama,diskon_jumlah,diskon_total_awal,diskon_total_akhir,diskon,harga,harga_akhir)
-                    perbarui_kategori(kategori_nama, kategori_jumlah, kategori_total_akhir,
-                  kategori_tunai, kategori_nontunai,
-                  kolom[2].strip(), harga_akhir, grup)
-                    perbarui_rentang(rentang_nama,rentang_jumlah,rentang_total_akhir,rentang,harga_akhir)
-                    jumlah_dihitung += 1
-
-        hasil = {
-            "jumlah_dibaca": jumlah_dibaca,
-            "jumlah_valid": jumlah_valid,
-            "jumlah_tidak_valid": jumlah_tidak_valid,
-            "jumlah_dihitung": jumlah_dihitung,
-            "diskon_nama": diskon_nama,
-            "diskon_jumlah": diskon_jumlah,
-            "diskon_total_awal": diskon_total_awal,
-            "diskon_total_akhir": diskon_total_akhir,
-            "kategori_nama": kategori_nama,
-            "kategori_jumlah": kategori_jumlah,
-            "kategori_total_akhir": kategori_total_akhir,
-            "kategori_tunai": kategori_tunai,
-            "kategori_nontunai": kategori_nontunai,
-            "rentang_nama": rentang_nama,
-            "rentang_jumlah": rentang_jumlah,
-            "rentang_total_akhir": rentang_total_akhir,
-        }
-        return hasil
-
 def jalan_program():
-    nama_file = "ecommerce_dataset_updated.csv"
-    batas_baris = 1000
-
-    if not file_ada(nama_file):
+    if not os.path.exists(nama_file):
         print("File tidak ditemukan")
         return
-
-    hasil = baca_dan_olahdata(nama_file, batas_baris)
-    if hasil is None:
+    data, dibaca = baca_data()
+    if data is None:
         return
-
-    if hasil["jumlah_valid"] == 0:
+    if len(data) == 0:
         print("Dataset kosong atau hanya header")
         return
 
-    urutkan_diskon(hasil["diskon_nama"], hasil["diskon_jumlah"],
-                   hasil["diskon_total_awal"], hasil["diskon_total_akhir"])
-    tampilkan_ringkasan_baris(hasil)
-    menu_output(hasil)
-   
-jalan_program()
+    print("=" * 78 + "\nRekap Transaksi E-Commerce 2024\n" + "=" * 78)
+    print("Baris dibaca      :", dibaca)
+    print("Baris valid       :", len(data))
+    print("Baris tidak valid :", dibaca - len(data))
+
+    while True:
+        print("\nMENU UTAMA\na. Tampilkan data\nb. Tambah data\nc. Hapus data\nd. Ubah data\n"
+              "e. Cari data\nf. Ringkasan\ng. Keluar")
+        p = input("Pilih menu (a-g): ").strip().lower()
+        if p == "a":
+            menu_tampilkan(data)
+        elif p == "b":
+            tambah_ubah_data(data)
+        elif p == "c":
+            hapus_data(data)
+        elif p == "d":
+            tambah_ubah_data(data, True)
+        elif p == "e":
+            cari_data(data)
+        elif p == "f":
+            menu_ringkasan(data)
+        elif p == "g":
+            print("Program selesai.")
+            break
+        else:
+            print("Pilihan tidak valid, masukkan huruf a sampai g.")
+
+if __name__ == "__main__":
+    jalan_program()
