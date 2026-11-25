@@ -179,7 +179,7 @@ def metode_dominan(tunai, nontunai):
     else:
         return "sama", tunai
 
-def tampilkan_hasil(hasil):
+def tampilkan_ringkasan_baris(hasil):
     garis = "=" * 78
 
     print(garis)
@@ -195,7 +195,7 @@ def tampilkan_tabel_a(hasil):
     d_jumlah = hasil["diskon_jumlah"]
     d_awal = hasil["diskon_total_awal"]
     d_akhir = hasil["diskon_total_akhir"]
-    urutkan_diskon(d_nama, d_jumlah, d_awal, d_akhir)
+  
 
     print()
     print("TABEL A. Rekap Per Level Diskon")
@@ -248,8 +248,8 @@ def tampilkan_tabel_c(hasil):
         print(nama_r.ljust(20) + str(jml).rjust(8) + ("%.2f" % rata).rjust(22))
 
 def tampilkan_terbanyak(hasil):
-    level_t, jml_level_t = cari_terbanyak(d_nama, d_jumlah)
-    rentang_t, jml_rentang_t = cari_terbanyak(r_nama, r_jumlah)
+    level_t, jml_level_t = cari_terbanyak(hasil["diskon_nama"], hasil["diskon_jumlah"])
+    rentang_t, jml_rentang_t = cari_terbanyak(hasil["rentang_nama"], hasil["rentang_jumlah"])
 
     print()
     print("Ringkasan Transaksi Terbanyak")
@@ -259,16 +259,14 @@ def tampilkan_terbanyak(hasil):
     else:
         print("Level diskon terbanyak  : -")
     print("Rentang harga terbanyak : %s (%d transaksi)" % (rentang_t, jml_rentang_t))
-    kategori_t, jml_kategori_t = cari_terbanyak(k_nama, k_jumlah)
-    print("Kategori terbanyak      : %s (%d transaksi)" % (kategori_t, jml_kategori_t))
-
+    
 def tampilkan_tabel_d(hasil):
     k_nama = hasil["kategori_nama"][:]
     k_jumlah = hasil["kategori_jumlah"][:]
     k_akhir = hasil["kategori_total_akhir"][:]
     k_tunai = hasil["kategori_tunai"][:]
     k_nontunai = hasil["kategori_nontunai"][:]
-    
+
     k_dominan = []
     k_nilai_urut = []
     for i in range(len(k_nama)):
@@ -287,7 +285,48 @@ def tampilkan_tabel_d(hasil):
     for i in range(len(k_nama)):
         print(str(i + 1).ljust(5) + k_nama[i].ljust(20) + str(k_tunai[i]).rjust(8)
               + str(k_nontunai[i]).rjust(12) + k_dominan[i].rjust(14))
-    print(garis)
+    print("=" * 78)
+
+def tampilkan_semua(hasil):
+    tampilkan_tabel_a(hasil)
+    tampilkan_tabel_b(hasil)
+    tampilkan_tabel_c(hasil)
+    tampilkan_terbanyak(hasil)
+    tampilkan_tabel_d(hasil)
+
+def tampilkan_menu():
+    print()
+    print("MENU TAMPILAN OUTPUT")
+    print("1. Tabel A - Rekap Per Level Diskon")
+    print("2. Tabel B - Rekap Per Kategori Produk")
+    print("3. Tabel C - Rekap Per Rentang Harga")
+    print("4. Ringkasan Transaksi Terbanyak")
+    print("5. Tabel D - Tunai dan Non-Tunai")
+    print("6. Tampilkan Semua")
+    print("0. Keluar")
+
+def menu_output(hasil):
+    while True:
+        tampilkan_menu()
+        pilihan = input("Pilih menu (0-6): ").strip()
+
+        if pilihan == "1":
+            tampilkan_tabel_a(hasil)
+        elif pilihan == "2":
+            tampilkan_tabel_b(hasil)
+        elif pilihan == "3":
+            tampilkan_tabel_c(hasil)
+        elif pilihan == "4":
+            tampilkan_terbanyak(hasil)
+        elif pilihan == "5":
+            tampilkan_tabel_d(hasil)
+        elif pilihan == "6":
+            tampilkan_semua(hasil)
+        elif pilihan == "0":
+            print("Program selesai.")
+            break
+        else:
+            print("Pilihan tidak valid, masukkan angka 0 sampai 6.")
 
 
 def baca_dan_olahdata(nama_file, batas_baris):
@@ -379,5 +418,9 @@ def jalan_program():
         print("Dataset kosong atau hanya header")
         return
 
-    tampilkan_hasil(hasil)
+    urutkan_diskon(hasil["diskon_nama"], hasil["diskon_jumlah"],
+                   hasil["diskon_total_awal"], hasil["diskon_total_akhir"])
+    tampilkan_ringkasan_baris(hasil)
+    menu_output(hasil)
+   
 jalan_program()
