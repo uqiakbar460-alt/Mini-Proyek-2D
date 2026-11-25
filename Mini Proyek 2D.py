@@ -54,58 +54,56 @@ def validasi_data(kolom):
         return "Final Price tidak sesuai dengan Price dan Discount"
     return ""
 
-def baris_valid(kolom):
-    if len (kolom) !=8:
-        return False
-    for k in kolom:
-        if k.strip()=="":
-            return False
+def baca_data():
+    data = []
+    dibaca = 0
+    with open(nama_file, "r", newline="", encoding="utf-8-sig") as f:
+        pembaca = csv.reader(f)
+        if next(pembaca) != header_batua:
+            print("Header salah atau tidak sesuai")
+            return None, 0
+        for baris in pembaca:
+            dibaca += 1
+            if validasi_data(baris) == "":
+                for i in range(8):
+                    baris[i] = baris[i].strip()
+                data.append(baris)
+    return data, dibaca
 
-    if not(angka_valid(kolom[3]) and angka_valid(kolom[4]) and angka_valid(kolom[5])):
-           return False
-
-    harga =float(kolom[3])
-    diskon=float(kolom[4])
-    harga_akhir=float(kolom[5])
-    if harga <= 0 :
-        return False
-    if diskon <0 or diskon > 100:
-        return False
-    if not tanggal_valid(kolom[7]):
-        return False
-    if round(harga * (1-diskon / 100), 2) !=harga_akhir:
-        return False
-    
-    return True
-
-def rentang_harga(harga):
-    if harga < 150:
-        return "<150"
-    elif harga < 300:
-        return "150-<300"
-    else:
-        return ">=300"
-
-def grup_metode(metode):
-    if metode == "Cash on Delivery":
-        return "Tunai"
-    else:
-        return "Non-Tunai"
-
-def urutkan_diskon(nama, jumlah, total_awal, total_akhir):
-    n = len(nama)
+def urutkan(nilai_urut, semua_list, menurun=False):
+   
+    n = len(nilai_urut)
     for i in range(n - 1):
-        idx_min = i
+        idx = i
         for j in range(i + 1, n):
-            if nama[j] < nama[idx_min]:
-                idx_min = j
-        if idx_min != i:
-            nama[i], nama[idx_min] = nama[idx_min], nama[i]
-            jumlah[i], jumlah[idx_min] = jumlah[idx_min], jumlah[i]
-            total_awal[i], total_awal[idx_min] = total_awal[idx_min], total_awal[i]
-            total_akhir[i], total_akhir[idx_min] = total_akhir[idx_min], total_akhir[i]
+            if menurun and nilai_urut[j] > nilai_urut[idx]:
+                idx = j
+            elif not menurun and nilai_urut[j] < nilai_urut[idx]:
+                idx = j
+        if idx != i:
+            for lst in semua_list:
+                lst[i], lst[idx] = lst[idx], lst[i]
 
-
+def tampilkan_daftar(data, daftar):
+    if len(daftar) == 0:
+        print("Data tidak ditemukan.")
+        return
+    kop = ("-" * 105 + "\n" + "No".ljust(7) + "User_ID".ljust(10) + "Product_ID".ljust(14)
+           + "Category".ljust(16) + "Price".rjust(9) + "Disc".rjust(6) + "Final".rjust(10)
+           + "  " + "Metode".ljust(18) + "Tanggal\n" + "-" * 105)
+    print(kop)
+    jumlah = 0
+    for idx in daftar:
+        b = data[idx]
+        print(str(idx + 1).ljust(7) + b[0].ljust(10) + b[1].ljust(14) + b[2].ljust(16) + b[3].rjust(9)
+              + b[4].rjust(6) + b[5].rjust(10) + "  " + b[6].ljust(18) + b[7])
+        jumlah += 1
+        if jumlah % 20 == 0 and jumlah < len(daftar):
+            if input("-- %d/%d -- Enter = lanjut, q = berhenti: " % (jumlah, len(daftar))).lower() == "q":
+                break
+            print(kop)
+    print("Total data:", len(daftar))
+    
 def urutkan_kategori(nama, jumlah, total_akhir, tunai, nontunai, dominan, nilai_urut):
     n = len(nama)
     for i in range(n - 1):
