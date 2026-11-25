@@ -155,46 +155,49 @@ def minta_data(lama):
         return None
     return baru
 
-def perbarui_kategori(nama, jumlah, total_akhir, tunai, nontunai, kategori, harga_akhir, grup):
-    if kategori in nama:
-        idx = nama.index (kategori)
-    else:
-        nama.append(kategori)
-        jumlah.append(0)
-        total_akhir.append(0)
-        tunai.append(0)
-        nontunai.append(0)
-        idx = len(nama) - 1
-    jumlah[idx] += 1
-    total_akhir[idx] += harga_akhir
-    if grup == "Tunai":
-        tunai[idx] += 1
-    else:
-        nontunai[idx] += 1
+def pilih_data(data, judul):
+    print("\n" + judul)
+    teks = input("Masukkan No data: ").strip()
+    if not teks.isdigit() or int(teks) < 1 or int(teks) > len(data):
+        print("Nomor tidak valid.")
+        return -1
+    tampilkan_daftar(data, [int(teks) - 1])
+    return int(teks) - 1
 
-def perbarui_rentang(nama,jumlah,total_akhir,rentang,harga_akhir):
-    if rentang in nama:
-        idx=nama.index(rentang)
+def tambah_ubah_data(data, ubah=False):
+    if ubah:
+        idx = pilih_data(data, "UBAH DATA")
+        if idx == -1:
+            return
+        print("Tekan Enter untuk mempertahankan nilai lama. Final Price dihitung otomatis.")
+        baru = minta_data(data[idx])
     else:
-        nama.append(rentang)
-        jumlah.append(0)
-        total_akhir.append(0)
-        idx = len(nama) - 1
-    jumlah[idx] += 1
-    total_akhir[idx] += harga_akhir
+        print("\nTAMBAH DATA (Final Price dihitung otomatis)")
+        baru = minta_data(None)
+    if baru is None:
+        return
+    if ubah:
+        data[idx] = baru
+        print("Data berhasil diubah.")
+    else:
+        data.append(baru)
+        print("Data berhasil ditambahkan dengan No", len(data), "| Final Price =", baru[5])
 
-def hitung_rata(total,jumlah):
-    if jumlah > 0:
-        return total / jumlah
-    else:
-        return 0
-def metode_dominan(tunai, nontunai):
-    if tunai > nontunai:
-        return "Tunai", tunai
-    if nontunai > tunai:
-        return "Non-tunai", nontunai
-    else:
-        return "sama", tunai
+def hapus_data(data):
+    idx = pilih_data(data, "HAPUS DATA")
+    if idx != -1 and input("Yakin ingin menghapus? (y/n): ").strip().lower() == "y":
+        data.pop(idx)
+        print("Data berhasil dihapus.")
+
+def cari_data(data):
+    kata = input("\nCARI DATA\nKata kunci (User_ID/Product_ID/Category/Metode/Tanggal): ").strip().lower()
+    daftar = []
+    for i in range(len(data)):
+        b = data[i]
+        if kata != "" and kata in (b[0] + " " + b[1] + " " + b[2] + " " + b[6] + " " + b[7]).lower():
+            daftar.append(i)
+    tampilkan_daftar(data, daftar)
+
 
 def tampilkan_ringkasan_baris(hasil):
     garis = "=" * 78
