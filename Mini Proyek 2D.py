@@ -251,9 +251,9 @@ def tabel_rekap(data, mode, judul, nama_kolom):
         if mode == "diskon":
             print((str(int(kunci[i])) + "%").ljust(9) + str(jml[i]).rjust(8) + ("%.2f" % rata_awal).rjust(20)
                   + ("%.2f" % rata_akhir).rjust(21) + ("%.2f" % (rata_awal - rata_akhir)).rjust(20))
-        else:
-            print(kunci[i].ljust(20) + str(jml[i]).rjust(8) + ("%.2f" % rata_akhir).rjust(22))
-
+         else:
+                   print(kunci[i].ljust(20) + str(jml[i]).rjust(8) + ("%.2f" % rata_akhir).rjust(22))
+       
 def tampil_terbanyak(data):
     print("\nRingkasan Transaksi Terbanyak\n" + "-" * 78)
     kunci, jml, _, _ = hitung_rekap(data, "diskon")
@@ -263,47 +263,63 @@ def tampil_terbanyak(data):
     i = jml.index(max(jml))
     print("Rentang harga terbanyak : %s (%d transaksi)" % (kunci[i], jml[i]))
 
-    print()
-    print("TABEL C. Rekap Per Rentang Harga")
-    print("-" * 78)
-    print("Rentang Harga".ljust(20) + "Jumlah".rjust(8) + "Rata Harga Akhir".rjust(22))
-    print("-" * 78)
-    for nama_r in urutan_rentang:
-        if nama_r in r_nama:
-            idx = r_nama.index(nama_r)
-            jml = r_jumlah[idx]
-            rata = hitung_rata(r_akhir[idx], jml)
+def tabel_d(data):
+    nama, jumlah, _, total_akhir = hitung_rekap(data, "kategori")
+    tunai = [0] * len(nama)
+    nontunai = [0] * len(nama)
+    for b in data:
+        i = nama.index(b[2])
+        if b[6] == "Cash on Delivery":
+            tunai[i] += 1
         else:
-            jml = 0
-            rata = 0
-        print(nama_r.ljust(20) + str(jml).rjust(8) + ("%.2f" % rata).rjust(22))
+            nontunai[i] += 1
 
-def tampilkan_terbanyak(hasil):
-    level_t, jml_level_t = cari_terbanyak(hasil["diskon_nama"], hasil["diskon_jumlah"])
-    rentang_t, jml_rentang_t = cari_terbanyak(hasil["rentang_nama"], hasil["rentang_jumlah"])
+    dominan = []
+    nilai_urut = []
+    for i in range(len(nama)):
+        if tunai[i] > nontunai[i]:
+            dominan.append("Tunai")
+        elif nontunai[i] > tunai[i]:
+            dominan.append("Non-tunai")
+        else:
+            dominan.append("Sama")
+        nilai_urut.append(max(tunai[i], nontunai[i]))
 
-    print()
-    print("Ringkasan Transaksi Terbanyak")
+    urutkan(nilai_urut, [nama, jumlah, total_akhir, tunai, nontunai, dominan, nilai_urut], menurun=True)
+
+    print("\nTABEL D. Tunai dan Nontunai Mana Paling Banyak\n" + "-" * 78)
+    print("No".ljust(5) + "Kategori".ljust(20) + "Tunai".rjust(8) + "Non-Tunai".rjust(12) + "Dominan".rjust(14))
     print("-" * 78)
-    if jml_level_t > 0:
-        print("Level diskon terbanyak  : %d%% (%d transaksi)" % (int(level_t), jml_level_t))
-    else:
-        print("Level diskon terbanyak  : -")
-    print("Rentang harga terbanyak : %s (%d transaksi)" % (rentang_t, jml_rentang_t))
-    
-def tampilkan_tabel_d(hasil):
-    k_nama = hasil["kategori_nama"][:]
-    k_jumlah = hasil["kategori_jumlah"][:]
-    k_akhir = hasil["kategori_total_akhir"][:]
-    k_tunai = hasil["kategori_tunai"][:]
-    k_nontunai = hasil["kategori_nontunai"][:]
+    for i in range(len(nama)):
+        print(str(i + 1).ljust(5) + nama[i].ljust(20) + str(tunai[i]).rjust(8)
+              + str(nontunai[i]).rjust(12) + dominan[i].rjust(14))
 
-    k_dominan = []
-    k_nilai_urut = []
-    for i in range(len(k_nama)):
-        dom, nilai = metode_dominan(k_tunai[i], k_nontunai[i])
-        k_dominan.append(dom)
-        k_nilai_urut.append(nilai)
+def menu_ringkasan(data):
+    data = data[:batas_baris]
+    if len(data) == 0:
+        print("Belum ada data untuk diringkas.")
+        return
+    print("\nBaris dianalisis:", len(data))
+    while True:
+        print("\nMENU RINGKASAN\n1. Tabel A - Per Level Diskon\n2. Tabel B - Per Kategori Produk\n"
+              "3. Tabel C - Per Rentang Harga\n4. Ringkasan Transaksi Terbanyak\n"
+              "5. Tabel D - Tunai dan Non-Tunai\n6. Tampilkan Semua\n0. Kembali")
+        p = input("Pilih menu (0-6): ").strip()
+        if p == "0":
+            return
+        if p not in ["1", "2", "3", "4", "5", "6"]:
+            print("Pilihan tidak valid, masukkan angka 0 sampai 6.")
+            continue
+        if p == "1" or p == "6":
+            tabel_rekap(data, "diskon", "TABEL A. Rekap Per Level Diskon", "Diskon")
+        if p == "2" or p == "6":
+            tabel_rekap(data, "kategori", "TABEL B. Rekap Per Kategori Produk", "Kategori")
+        if p == "3" or p == "6":
+            tabel_rekap(data, "rentang", "TABEL C. Rekap Per Rentang Harga", "Rentang Harga")
+        if p == "4" or p == "6":
+            tampil_terbanyak(data)
+        if p == "5" or p == "6":
+            tabel_d(data)
 
     urutkan_kategori(k_nama, k_jumlah, k_akhir, k_tunai, k_nontunai, k_dominan, k_nilai_urut)
 
