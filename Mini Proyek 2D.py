@@ -302,24 +302,11 @@ def menu_ringkasan(data):
     print("\nBaris dianalisis:", len(data))
     while True:
         print("\nMENU RINGKASAN\n1. Tabel A - Per Level Diskon\n2. Tabel B - Per Kategori Produk\n"
-              "3. Tabel C - Per Rentang Harga\n4. Ringkasan Transaksi Terbanyak\n"
-              "5. Tabel D - Tunai dan Non-Tunai\n6. Tampilkan Semua\n0. Kembali")
-        p = input("Pilih menu (0-6): ").strip()
-        if p == "0":
-            return
-        if p not in ["1", "2", "3", "4", "5", "6"]:
-            print("Pilihan tidak valid, masukkan angka 0 sampai 6.")
-            continue
-        if p == "1" or p == "6":
-            tabel_rekap(data, "diskon", "TABEL A. Rekap Per Level Diskon", "Diskon")
-        if p == "2" or p == "6":
-            tabel_rekap(data, "kategori", "TABEL B. Rekap Per Kategori Produk", "Kategori")
-        if p == "3" or p == "6":
-            tabel_rekap(data, "rentang", "TABEL C. Rekap Per Rentang Harga", "Rentang Harga")
-        if p == "4" or p == "6":
-            tampil_terbanyak(data)
-        if p == "5" or p == "6":
-            tabel_d(data)
+    tabel_rekap(data, "diskon", "TABEL A. Rekap Per Level Diskon", "Diskon")
+    tabel_rekap(data, "kategori", "TABEL B. Rekap Per Kategori Produk", "Kategori")
+    tabel_rekap(data, "rentang", "TABEL C. Rekap Per Rentang Harga", "Rentang Harga")
+    tampil_terbanyak(data)
+    tabel_d(data)
 
 def jalan_program():
     if not os.path.exists(nama_file):
