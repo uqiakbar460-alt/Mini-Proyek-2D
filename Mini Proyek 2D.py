@@ -293,15 +293,12 @@ def tabel_d(data):
     for i in range(len(nama)):
         print(str(i + 1).ljust(5) + nama[i].ljust(20) + str(tunai[i]).rjust(8)
               + str(nontunai[i]).rjust(12) + dominan[i].rjust(14))
-
 def menu_ringkasan(data):
     data = data[:batas_baris]
     if len(data) == 0:
         print("Belum ada data untuk diringkas.")
         return
     print("\nBaris dianalisis:", len(data))
-    while True:
-        print("\nMENU RINGKASAN\n1. Tabel A - Per Level Diskon\n2. Tabel B - Per Kategori Produk\n"
     tabel_rekap(data, "diskon", "TABEL A. Rekap Per Level Diskon", "Diskon")
     tabel_rekap(data, "kategori", "TABEL B. Rekap Per Kategori Produk", "Kategori")
     tabel_rekap(data, "rentang", "TABEL C. Rekap Per Rentang Harga", "Rentang Harga")
