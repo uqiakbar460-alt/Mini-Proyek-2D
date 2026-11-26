@@ -258,43 +258,47 @@ def tabel_rekap(data, mode, judul, nama_kolom):
         
 def tampil_terbanyak(data):
     print("\nRingkasan Transaksi Terbanyak\n" + "-" * 78)
-    kunci, jml, _, _ = hitung_rekap(data, "diskon")
-    i = jml.index(max(jml))
-    print("Level diskon terbanyak  : %d%% (%d transaksi)" % (int(kunci[i]), jml[i]))
-    kunci, jml, _, _ = hitung_rekap(data, "rentang")
-    i = jml.index(max(jml))
-    print("Rentang harga terbanyak : %s (%d transaksi)" % (kunci[i], jml[i]))
+    diskon, jumlah, total_awal, total_akhir = hitung_rekap(data, "diskon")
+    posisi = jumlah.index(max(jumlah))
+    print("Level diskon terbanyak  : %d%% (%d transaksi)" % (int(diskon[posisi]), jumlah[posisi]))
+    rentang, jumlah, total_awal, total_akhir = hitung_rekap(data, "rentang")
+    posisi = jumlah.index(max(jumlah))
+    print("Rentang harga terbanyak : %s (%d transaksi)" % (rentang[posisi], jumlah[posisi]))
 
-def tabel_d(data):
-    nama, jumlah, _, total_akhir = hitung_rekap(data, "kategori")
-    tunai = [0] * len(nama)
-    nontunai = [0] * len(nama)
-    for b in data:
-        i = nama.index(b[2])
-        if b[6] == "Cash on Delivery":
-            tunai[i] += 1
-        else:
-            nontunai[i] += 1
+class TabelD:
+    def __init__(self, data):
+        self.kategori = hitung_rekap(data, "kategori")[0]
+        self.tunai = [0] * len(self.kategori)
+        self.nontunai = [0] * len(self.kategori)
+        self.dominan = []
+        self.jumlah_dominan = []
+        for baris in data:
+            i = self.kategori.index(baris[2])
+            if baris[6] == "Cash on Delivery":
+                self.tunai[i] += 1
+            else:
+                self.nontunai[i] += 1
 
-    dominan = []
-    nilai_urut = []
-    for i in range(len(nama)):
-        if tunai[i] > nontunai[i]:
-            dominan.append("Tunai")
-        elif nontunai[i] > tunai[i]:
-            dominan.append("Non-tunai")
-        else:
-            dominan.append("Sama")
-        nilai_urut.append(max(tunai[i], nontunai[i]))
+    def tentukan_dominan(self):
+        for i in range(len(self.kategori)):
+            if self.tunai[i] > self.nontunai[i]:
+                self.dominan.append("Tunai")
+            elif self.nontunai[i] > self.tunai[i]:
+                self.dominan.append("Non-tunai")
+            else:
+                self.dominan.append("Sama")
+            self.jumlah_dominan.append(max(self.tunai[i], self.nontunai[i]))
+        urutkan(self.jumlah_dominan, [self.kategori, self.tunai, self.nontunai,
+                                      self.dominan, self.jumlah_dominan], menurun=True)
 
-    urutkan(nilai_urut, [nama, jumlah, total_akhir, tunai, nontunai, dominan, nilai_urut], menurun=True)
-
-    print("\nTABEL D. Tunai dan Nontunai Mana Paling Banyak\n" + "-" * 78)
-    print("No".ljust(5) + "Kategori".ljust(20) + "Tunai".rjust(8) + "Non-Tunai".rjust(12) + "Dominan".rjust(14))
-    print("-" * 78)
-    for i in range(len(nama)):
-        print(str(i + 1).ljust(5) + nama[i].ljust(20) + str(tunai[i]).rjust(8)
-              + str(nontunai[i]).rjust(12) + dominan[i].rjust(14))
+    def tampilkan(self):
+        self.tentukan_dominan()
+        print("\nTABEL D. Tunai dan Nontunai Mana Paling Banyak\n" + "-" * 78)
+        print("No".ljust(5) + "Kategori".ljust(20) + "Tunai".rjust(8) + "Non-Tunai".rjust(12) + "Dominan".rjust(14))
+        print("-" * 78)
+        for i in range(len(self.kategori)):
+            print(str(i + 1).ljust(5) + self.kategori[i].ljust(20) + str(self.tunai[i]).rjust(8)
+                  + str(self.nontunai[i]).rjust(12) + self.dominan[i].rjust(14))
 def menu_ringkasan(data):
     data = data[:batas_baris]
     if len(data) == 0:
