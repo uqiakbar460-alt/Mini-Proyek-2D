@@ -71,7 +71,7 @@ def baca_data():
     return data, dibaca
 
 def urutkan(nilai_urut, semua_list, menurun=False):
-   
+
     n = len(nilai_urut)
     for i in range(n - 1):
         idx = i
@@ -142,7 +142,7 @@ def minta_data(lama):
             petunjuk = " [" + lama[i] + "]"
         teks = input(header_batua[i] + petunjuk + ": ").strip()
         if teks == "" and lama is not None:
-            teks = lama[i]  
+            teks = lama[i]  # Enter = pakai nilai lama
         baru.append(teks)
     if baru[3].replace(".", "", 1).isdigit() and baru[4].replace(".", "", 1).isdigit():
         baru[5] = "%.2f" % round(float(baru[3]) * (1 - float(baru[4]) / 100), 2)
@@ -230,7 +230,7 @@ def hitung_rekap(data, mode):
         awal[i] += float(data[j][3])
         akhir[i] += float(data[j][5])
     if mode == "diskon":
-        urutkan(kunci, [kunci, jml, awal, akhir])  
+        urutkan(kunci, [kunci, jml, awal, akhir])  # level diskon diurutkan naik
     return kunci, jml, awal, akhir
 
 def tabel_diskon(data):
@@ -255,7 +255,7 @@ def tabel_rekap(data, mode, judul, nama_kolom):
         if jumlah[i] > 0:
             rata_akhir = total_akhir[i] / jumlah[i]
         print(kelompok[i].ljust(20) + str(jumlah[i]).rjust(8) + ("%.2f" % rata_akhir).rjust(22))
-        
+
 def tampil_terbanyak(data):
     print("\nRingkasan Transaksi Terbanyak\n" + "-" * 78)
     diskon, jumlah, total_awal, total_akhir = hitung_rekap(data, "diskon")
@@ -299,55 +299,69 @@ class TabelD:
         for i in range(len(self.kategori)):
             print(str(i + 1).ljust(5) + self.kategori[i].ljust(20) + str(self.tunai[i]).rjust(8)
                   + str(self.nontunai[i]).rjust(12) + self.dominan[i].rjust(14))
+
 def menu_ringkasan(data):
     data = data[:batas_baris]
     if len(data) == 0:
         print("Belum ada data untuk diringkas.")
         return
     print("\nBaris dianalisis:", len(data))
-    tabel_rekap(data, "diskon", "TABEL A. Rekap Per Level Diskon", "Diskon")
+    tabel_diskon(data)
     tabel_rekap(data, "kategori", "TABEL B. Rekap Per Kategori Produk", "Kategori")
     tabel_rekap(data, "rentang", "TABEL C. Rekap Per Rentang Harga", "Rentang Harga")
     tampil_terbanyak(data)
-    tabel_d(data)
+    TabelD(data).tampilkan()
 
-def jalan_program():
-    if not os.path.exists(nama_file):
-        print("File tidak ditemukan")
-        return
-    data, dibaca = baca_data()
-    if data is None:
-        return
-    if len(data) == 0:
-        print("Dataset kosong atau hanya header")
-        return
 
-    print("=" * 78 + "\nRekap Transaksi E-Commerce 2024\n" + "=" * 78)
-    print("Baris dibaca      :", dibaca)
-    print("Baris valid       :", len(data))
-    print("Baris tidak valid :", dibaca - len(data))
+class AplikasiRekap:
+    def __init__(self, nama_file):
+        self.nama_file = nama_file
+        self.data = []
+        self.dibaca = 0
 
-    while True:
-        print("\nMENU UTAMA\na. Tampilkan data\nb. Tambah data\nc. Hapus data\nd. Ubah data\n"
-              "e. Cari data\nf. Ringkasan\ng. Keluar")
-        p = input("Pilih menu (a-g): ").strip().lower()
+    def proses_pilihan(self, p):
         if p == "a":
-            menu_tampilkan(data)
+            menu_tampilkan(self.data)
         elif p == "b":
-            tambah_ubah_data(data)
+            tambah_ubah_data(self.data)
         elif p == "c":
-            hapus_data(data)
+            hapus_data(self.data)
         elif p == "d":
-            tambah_ubah_data(data, True)
+            tambah_ubah_data(self.data, True)
         elif p == "e":
-            cari_data(data)
+            cari_data(self.data)
         elif p == "f":
-            menu_ringkasan(data)
+            menu_ringkasan(self.data)
         elif p == "g":
             print("Program selesai.")
-            break
+            return False
         else:
             print("Pilihan tidak valid, masukkan huruf a sampai g.")
+        return True
+
+    def jalankan(self):
+        if not os.path.exists(self.nama_file):
+            print("File tidak ditemukan")
+            return
+        self.data, self.dibaca = baca_data()
+        if self.data is None:
+            return
+        if len(self.data) == 0:
+            print("Dataset kosong atau hanya header")
+            return
+
+        print("=" * 78 + "\nRekap Transaksi E-Commerce 2024\n" + "=" * 78)
+        print("Baris dibaca      :", self.dibaca)
+        print("Baris valid       :", len(self.data))
+        print("Baris tidak valid :", self.dibaca - len(self.data))
+
+        berjalan = True
+        while berjalan:
+            print("\nMENU UTAMA\na. Tampilkan data\nb. Tambah data\nc. Hapus data\nd. Ubah data\n"
+                  "e. Cari data\nf. Ringkasan\ng. Keluar")
+            p = input("Pilih menu (a-g): ").strip().lower()
+            berjalan = self.proses_pilihan(p)
+
 
 if __name__ == "__main__":
-    jalan_program()
+    AplikasiRekap(nama_file).jalankan()
