@@ -142,7 +142,7 @@ def minta_data(lama):
             petunjuk = " [" + lama[i] + "]"
         teks = input(header_batua[i] + petunjuk + ": ").strip()
         if teks == "" and lama is not None:
-            teks = lama[i]  # Enter = pakai nilai lama
+            teks = lama[i]  
         baru.append(teks)
     if baru[3].replace(".", "", 1).isdigit() and baru[4].replace(".", "", 1).isdigit():
         baru[5] = "%.2f" % round(float(baru[3]) * (1 - float(baru[4]) / 100), 2)
@@ -230,30 +230,32 @@ def hitung_rekap(data, mode):
         awal[i] += float(data[j][3])
         akhir[i] += float(data[j][5])
     if mode == "diskon":
-        urutkan(kunci, [kunci, jml, awal, akhir])  # level diskon diurutkan naik
+        urutkan(kunci, [kunci, jml, awal, akhir])  
     return kunci, jml, awal, akhir
 
-def tabel_rekap(data, mode, judul, nama_kolom):
-    kunci, jml, awal, akhir = hitung_rekap(data, mode)
-    print("\n" + judul + "\n" + "-" * 78)
-    if mode == "diskon":
-        print(nama_kolom.ljust(9) + "Jumlah".rjust(8) + "Rata Harga Awal".rjust(20)
-              + "Rata Harga Akhir".rjust(21) + "Rata Potongan".rjust(20))
-    else:
-        print(nama_kolom.ljust(20) + "Jumlah".rjust(8) + "Rata Harga Akhir".rjust(22))
+def tabel_diskon(data):
+    diskon, jumlah, total_awal, total_akhir = hitung_rekap(data, "diskon")
+    print("\nTABEL A. Rekap Per Level Diskon\n" + "-" * 78)
+    print("Diskon".ljust(9) + "Jumlah".rjust(8) + "Rata Harga Awal".rjust(20)
+          + "Rata Harga Akhir".rjust(21) + "Rata Potongan".rjust(20))
     print("-" * 78)
-    for i in range(len(kunci)):
-        rata_awal = 0
+    for i in range(len(diskon)):
+        rata_awal = total_awal[i] / jumlah[i]
+        rata_akhir = total_akhir[i] / jumlah[i]
+        print((str(int(diskon[i])) + "%").ljust(9) + str(jumlah[i]).rjust(8) + ("%.2f" % rata_awal).rjust(20)
+              + ("%.2f" % rata_akhir).rjust(21) + ("%.2f" % (rata_awal - rata_akhir)).rjust(20))
+
+def tabel_rekap(data, mode, judul, nama_kolom):
+    kelompok, jumlah, total_awal, total_akhir = hitung_rekap(data, mode)
+    print("\n" + judul + "\n" + "-" * 78)
+    print(nama_kolom.ljust(20) + "Jumlah".rjust(8) + "Rata Harga Akhir".rjust(22))
+    print("-" * 78)
+    for i in range(len(kelompok)):
         rata_akhir = 0
-        if jml[i] > 0:
-            rata_awal = awal[i] / jml[i]
-            rata_akhir = akhir[i] / jml[i]
-        if mode == "diskon":
-            print((str(int(kunci[i])) + "%").ljust(9) + str(jml[i]).rjust(8) + ("%.2f" % rata_awal).rjust(20)
-                  + ("%.2f" % rata_akhir).rjust(21) + ("%.2f" % (rata_awal - rata_akhir)).rjust(20))
-        else:
-                   print(kunci[i].ljust(20) + str(jml[i]).rjust(8) + ("%.2f" % rata_akhir).rjust(22))
-       
+        if jumlah[i] > 0:
+            rata_akhir = total_akhir[i] / jumlah[i]
+        print(kelompok[i].ljust(20) + str(jumlah[i]).rjust(8) + ("%.2f" % rata_akhir).rjust(22))
+        
 def tampil_terbanyak(data):
     print("\nRingkasan Transaksi Terbanyak\n" + "-" * 78)
     kunci, jml, _, _ = hitung_rekap(data, "diskon")
