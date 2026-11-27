@@ -71,7 +71,6 @@ def baca_data():
     return data, dibaca
 
 def urutkan(nilai_urut, semua_list, menurun=False):
-
     n = len(nilai_urut)
     for i in range(n - 1):
         idx = i
@@ -142,7 +141,7 @@ def minta_data(lama):
             petunjuk = " [" + lama[i] + "]"
         teks = input(header_batua[i] + petunjuk + ": ").strip()
         if teks == "" and lama is not None:
-            teks = lama[i]  # Enter = pakai nilai lama
+            teks = lama[i]  
         baru.append(teks)
     if baru[3].replace(".", "", 1).isdigit() and baru[4].replace(".", "", 1).isdigit():
         baru[5] = "%.2f" % round(float(baru[3]) * (1 - float(baru[4]) / 100), 2)
@@ -199,7 +198,6 @@ def cari_data(data):
     tampilkan_daftar(data, daftar)
 
 def hitung_rekap(data, mode):
-
     daftar_kunci = []
     for b in data:
         if mode == "diskon":
@@ -230,7 +228,7 @@ def hitung_rekap(data, mode):
         awal[i] += float(data[j][3])
         akhir[i] += float(data[j][5])
     if mode == "diskon":
-        urutkan(kunci, [kunci, jml, awal, akhir])  # level diskon diurutkan naik
+        urutkan(kunci, [kunci, jml, awal, akhir]) 
     return kunci, jml, awal, akhir
 
 def tabel_diskon(data):
